@@ -2,49 +2,22 @@ import type { VideoMetadata } from "../types/VideoMetadata";
 import * as React from "react";
 import { VideoStatusRadio } from "./VideoStatusRadio";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { useMetadata } from "@/hooks/useMetadata";
 
 interface VideoInfoProps {
   name: string;
-  data: VideoMetadata;
-  updateAllMetadata: (name: string, patch: Partial<VideoMetadata>) => void;
+  metadata: VideoMetadata;
   onNextVideo: () => void;
 }
 
-export const VideoInfo = ({
-  data,
-  name,
-  updateAllMetadata,
-  onNextVideo,
-}: VideoInfoProps) => {
-  const [status, setStatus] = React.useState(data.status);
+export const VideoInfo = ({ metadata, name, onNextVideo }: VideoInfoProps) => {
+  const [status, setStatus] = React.useState(metadata.status);
   const onStatusChange = (s: string) => setStatus(s);
+  const { update } = useMetadata();
 
   const handleSave = async () => {
     try {
-      const response = await fetch("/api/video/metadata", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          video: name,
-          metadata: {
-            // Send the entire metadata plus the current status selection
-            ...data,
-            status: status,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update metadata: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      updateAllMetadata(name, { status });
-      toast(result.message);
-      //displayModal(result.message);
+      update(name, { ...metadata, status: status });
     } catch (error) {
       console.error("Error updating video metadata:", error);
     }
@@ -102,16 +75,10 @@ export const VideoInfo = ({
   }, [statusOptions, handleSave, onNextVideo]);
 
   React.useEffect(() => {
-    console.log("Status:", status);
-  });
-  React.useEffect(() => {
-    setStatus(data.status);
-  }, [data]);
+    setStatus(metadata.status);
+  }, [metadata]);
 
-  React.useEffect(() => {
-    console.log("grecia");
-  });
-  return name && data && status ? (
+  return name && metadata && status ? (
     <>
       <div style={{ marginBottom: "10px" }}>
         <div className="text-left">
@@ -123,7 +90,7 @@ export const VideoInfo = ({
         <div className="text-left">
           <b>Prompt:</b>
         </div>
-        <div className="text-left">{data.prompt}</div>
+        <div className="text-left">{metadata.prompt}</div>
       </div>
       <div>
         <div className="text-left">

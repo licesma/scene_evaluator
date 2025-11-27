@@ -1,11 +1,28 @@
+import { usePoses } from "@/hooks/usePoses";
 import type { FC } from "react";
 
 interface PosesTabProps {
-  // Define your props here as needed
+  video?: string;
 }
 
-const PosesTab: FC<PosesTabProps> = (props) => {
-  return <div>{/* PosesTab content goes here */}</div>;
+const PosesTab: FC<PosesTabProps> = ({ video }) => {
+  const { data } = usePoses(video);
+  return (
+    <div className="mt-0 flex flex-row flex-wrap gap-2">
+      {data && 0 < data.length
+        ? data.map((url) => (
+            <video
+              autoPlay
+              loop
+              key={url}
+              controls
+              src={url}
+              style={{ maxWidth: "100%" }}
+            />
+          ))
+        : null}
+    </div>
+  );
 };
 
 export default PosesTab;

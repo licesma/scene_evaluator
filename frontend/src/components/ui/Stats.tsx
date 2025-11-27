@@ -10,12 +10,6 @@ interface StatsProps {
 
 const Stats: FC<StatsProps> = ({ videos, label }) => {
   const trackedAuthors = authors.filter((a) => a !== "all");
-  const statusLabelByKey = {
-    pending: "Pending",
-    object: "Wrong objects",
-    pose: "Wrong pose",
-    approved: "Approved",
-  } as const;
   const statusKeys = Object.keys(status) as Array<StatusType>;
 
   return (

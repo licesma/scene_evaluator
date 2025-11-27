@@ -2,8 +2,9 @@ import "../App.css";
 import { ModelViewer } from "@/components/ModelViewer";
 import "@google/model-viewer";
 import { useEffect, useMemo } from "react";
-import { useGlb } from "@/lib/glbQuery";
+import { useGlb } from "@/hooks/useGlb";
 import type { FC } from "react";
+import { useMetadata } from "@/hooks/useMetadata";
 
 interface ModelTabProps {
   selectedVideo: string | undefined;
@@ -11,6 +12,8 @@ interface ModelTabProps {
 
 const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
   const { data: glbBlob } = useGlb(selectedVideo);
+  const { getMetadata } = useMetadata();
+  const metadata = getMetadata(selectedVideo);
   const blobUrl = useMemo(
     () => (glbBlob ? URL.createObjectURL(glbBlob) : undefined),
     [glbBlob]
@@ -31,8 +34,8 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
       <div style={{ marginTop: "20px" }}>
         <img
           src={
-            selectedVideo
-              ? `frames/${selectedVideo}.jpg`
+            selectedVideo && metadata
+              ? `https://openreal2sim.s3.us-west-2.amazonaws.com/${metadata.week}/${metadata.author}/${selectedVideo}/source/000000.jpg`
               : "https://picsum.photos/400/300"
           }
           alt="Frame from selected video"
