@@ -55,6 +55,7 @@ export const VideoInfo = ({ metadata, name, onNextVideo }: VideoInfoProps) => {
       // Enter triggers save
       if (e.key === "Enter") {
         handleSave();
+        onNextVideo();
         e.preventDefault();
         return;
       }

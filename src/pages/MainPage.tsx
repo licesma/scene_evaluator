@@ -79,7 +79,7 @@ export const MainPage: React.FC<MainPageProps> = ({ allMetadata }) => {
   }, [allMetadata, selectedAuthor, selectedWeek, selectedStatus]);
 
   const orderedVideos = React.useMemo(() => {
-    return Object.keys(filteredVideos);
+    return Object.keys(filteredVideos).sort((a, b) => a.localeCompare(b));
   }, [filteredVideos]);
 
   usePrefetchGlb(orderedVideos, selectedVideo);

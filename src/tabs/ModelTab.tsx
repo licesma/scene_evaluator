@@ -26,7 +26,7 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
     };
   }, [blobUrl]);
   return (
-    <>
+    <div className="h-full">
       <ModelViewer
         src={blobUrl ?? (selectedVideo ? `scenes/${selectedVideo}.glb` : "")}
         alt="Reconstruction scenario"
@@ -42,7 +42,7 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
           style={{ maxWidth: "100%", height: "100%", maxHeight: "360px" }}
         />
       </div>
-    </>
+    </div>
   );
 };
 

@@ -27,7 +27,10 @@ const UsersGrid = (props: UserGridProps) => {
     { field: "name", flex: 3, cellStyle: { textAlign: "left" } },
   ]);
   const rowData = useMemo(
-    () => Object.keys(videos).map((v) => ({ name: v })),
+    () =>
+      Object.keys(videos)
+        .map((v) => ({ name: v }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
     [videos]
   );
 
