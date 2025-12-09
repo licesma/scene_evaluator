@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/download/:video",
+      "destination": "/api/download/:video"
+    }
+  ]
+}
