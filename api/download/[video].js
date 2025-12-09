@@ -6,13 +6,7 @@ import {
 } from "@aws-sdk/client-s3";
 import archiver from "archiver";
 
-const s3 = new S3Client({
-  region: "us-west-2",
-  credentials: {
-    accessKeyId: "anonymous",
-    secretAccessKey: "anonymous",
-  },
-});
+const s3 = new S3Client({ region: "us-west-2" });
 
 export default async function handler(req, res) {
   try {
