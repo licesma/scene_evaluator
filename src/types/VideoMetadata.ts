@@ -3,4 +3,5 @@ export interface VideoMetadata {
   author: string;
   status: string;
   prompt: string;
+  pose: string;
 }

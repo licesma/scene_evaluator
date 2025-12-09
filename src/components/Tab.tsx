@@ -11,13 +11,17 @@ import PosesTab from "@/tabs/PosesTab";
 interface TabProps {
   selectedVideo: string | undefined;
   videos: Record<string, VideoMetadata>;
-  type: TabType;
+  onTabChange: (tab: TabType) => void;
 }
 
-export const Tab: FC<TabProps> = ({ videos, selectedVideo }) => {
+export const Tab: FC<TabProps> = ({ videos, selectedVideo, onTabChange }) => {
   return (
     <div className="flex gap-6 max-w-none w-full">
-      <Tabs defaultValue="model" className="w-full flex">
+      <Tabs
+        defaultValue="model"
+        className="w-full flex"
+        onValueChange={(val: string) => onTabChange(val as TabType)}
+      >
         <TabsList className="mx-auto">
           <TabsTrigger className="w-186 " value="model">
             Model

@@ -47,12 +47,44 @@ export function useMetadata() {
     },
   });
 
+  const updateManyMutation = useMutation({
+    mutationFn: async (updates: Record<string, VideoMetadata>) => {
+      await updateDoc(docRef, updates);
+    },
+    onMutate: async (updates) => {
+      await queryClient.cancelQueries({ queryKey: ["reconstructions"] });
+      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>([
+        "reconstructions",
+      ]);
+      if (previous) {
+        queryClient.setQueryData<Record<string, VideoMetadata>>(
+          ["reconstructions"],
+          { ...previous, ...updates }
+        );
+      }
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["reconstructions"], context.previous);
+      }
+    },
+    onSuccess: (_data, updates) => {
+      void queryClient.invalidateQueries({ queryKey: ["reconstructions"] });
+      const count = Object.keys(updates).length;
+      toast(`${count} video${count === 1 ? "" : "s"} updated`);
+    },
+  });
+
   return {
     ...query,
     getMetadata: (video?: string): VideoMetadata | undefined =>
       video ? query.data?.[video] : undefined,
     update: (key: string, value: VideoMetadata) =>
       updateMutation.mutateAsync({ key, value }),
+    updateMany: (updates: Record<string, VideoMetadata>) =>
+      updateManyMutation.mutateAsync(updates),
     updateMutation,
+    updateManyMutation,
   };
 }

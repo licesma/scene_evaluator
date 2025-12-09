@@ -4,13 +4,17 @@ import { VideoStatusRadio } from "./VideoStatusRadio";
 import { Button } from "@/components/ui/button";
 import { useMetadata } from "@/hooks/useMetadata";
 
-interface VideoInfoProps {
+interface StatusSelectorProps {
   name: string;
   metadata: VideoMetadata;
   onNextVideo: () => void;
 }
 
-export const VideoInfo = ({ metadata, name, onNextVideo }: VideoInfoProps) => {
+export const StatusSelector = ({
+  metadata,
+  name,
+  onNextVideo,
+}: StatusSelectorProps) => {
   const [status, setStatus] = React.useState(metadata.status);
   const onStatusChange = (s: string) => setStatus(s);
   const { update } = useMetadata();

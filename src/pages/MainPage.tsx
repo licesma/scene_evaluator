@@ -3,7 +3,7 @@ import "../App.css";
 import "@google/model-viewer";
 import UsersGrid from "@/components/UserGrid";
 import type { VideoMetadata } from "@/types/VideoMetadata";
-import { VideoInfo } from "@/components/VideoInfo";
+import { StatusSelector } from "@/components/StatusSelector";
 import { Tab } from "@/components/Tab";
 import { ControlBar } from "@/components/ControlBar";
 import type { TabType } from "@/types/Tab";
@@ -13,6 +13,7 @@ import { usePrefetchGlb } from "@/hooks/useGlb";
 import { type StatusType } from "@/types/Status";
 import { Separator } from "@/components/ui/separator";
 import { useMetadata } from "@/hooks/useMetadata";
+import { PoseSelector } from "@/components/PoseSelector";
 
 function filterVideos(
   allMetadata: Record<string, VideoMetadata>,
@@ -82,6 +83,9 @@ export const MainPage: React.FC<MainPageProps> = ({ allMetadata }) => {
     return Object.keys(filteredVideos).sort((a, b) => a.localeCompare(b));
   }, [filteredVideos]);
 
+  React.useEffect(() => {
+    console.log("elena", selectedTab, metadata, selectedVideo);
+  });
   usePrefetchGlb(orderedVideos, selectedVideo);
 
   return (
@@ -100,8 +104,22 @@ export const MainPage: React.FC<MainPageProps> = ({ allMetadata }) => {
       <div className="grid grid-flow-col grid-cols-[1fr_3fr] gap-[10px]">
         <div className="left-side">
           <UsersGrid videos={filteredVideos} onSelect={onSelectVideo} />
-          {selectedVideo && metadata ? (
-            <VideoInfo
+          {selectedVideo && metadata && selectedTab === "model" ? (
+            <StatusSelector
+              name={selectedVideo}
+              metadata={metadata}
+              onNextVideo={() => {
+                if (!selectedVideo) return;
+                const idx = orderedVideos.indexOf(selectedVideo);
+                if (idx === -1) return;
+                const hasNext = idx + 1 < orderedVideos.length;
+                if (hasNext) {
+                  onSelectVideo(orderedVideos[idx + 1]);
+                }
+              }}
+            />
+          ) : selectedVideo && metadata && selectedTab === "poses" ? (
+            <PoseSelector
               name={selectedVideo}
               metadata={metadata}
               onNextVideo={() => {
@@ -118,8 +136,8 @@ export const MainPage: React.FC<MainPageProps> = ({ allMetadata }) => {
         </div>
         <div className="grid">
           <Tab
-            type={selectedTab}
             selectedVideo={selectedVideo}
+            onTabChange={(tab: TabType) => setSelectedTab(tab)}
             videos={filteredVideos}
           />
         </div>
