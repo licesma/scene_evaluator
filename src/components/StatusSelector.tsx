@@ -15,7 +15,7 @@ export const StatusSelector = ({
   name,
   onNextVideo,
 }: StatusSelectorProps) => {
-  const [status, setStatus] = React.useState(metadata.status);
+  const [status, setStatus] = React.useState(metadata.status ?? "pending");
   const onStatusChange = (s: string) => setStatus(s);
   const { update } = useMetadata();
 
@@ -80,8 +80,12 @@ export const StatusSelector = ({
   }, [statusOptions, handleSave, onNextVideo]);
 
   React.useEffect(() => {
-    setStatus(metadata.status);
+    setStatus(metadata.status ?? "pending");
   }, [metadata]);
+
+  React.useEffect(() => {
+    console.log(name, metadata, status);
+  });
 
   return name && metadata && status ? (
     <>
