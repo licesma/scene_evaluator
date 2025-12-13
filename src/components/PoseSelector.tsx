@@ -15,7 +15,9 @@ export const PoseSelector = ({
   name,
   onNextVideo,
 }: PoseSelectorProps) => {
-  const [pose, setPose] = React.useState(metadata.pose);
+  const [pose, setPose] = React.useState(
+    metadata?.pose ? metadata.pose : "pending"
+  );
   const onPoseChange = (s: string) => setPose(s);
   const { update } = useMetadata();
 
@@ -26,11 +28,6 @@ export const PoseSelector = ({
       console.error("Error updating video metadata:", error);
     }
   };
-
-  React.useEffect(() => {
-    console.log("ELena te q");
-  });
-
   // Available statuses in the same order as the radio options
   const poseOptions = React.useMemo(
     () => ["pending", "wrong", "almost", "approved"],
@@ -38,7 +35,7 @@ export const PoseSelector = ({
   );
 
   React.useEffect(() => {
-    setPose(metadata.pose);
+    setPose(metadata.pose ?? "undefined");
   }, [metadata]);
 
   // Keybindings: 1-4 map to each status option
