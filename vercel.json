@@ -3,6 +3,10 @@
     {
       "source": "/download/:video",
       "destination": "/api/download/:video"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
