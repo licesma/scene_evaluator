@@ -1,3 +1,3 @@
-export const tabs = ["model", "poses", "stats"] as const;
+export const tabs = ["model", "poses"] as const;
 
 export type TabType = (typeof tabs)[number];
