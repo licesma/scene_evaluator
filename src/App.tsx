@@ -2,6 +2,7 @@ import "./App.css";
 import "@google/model-viewer";
 import { MainPage } from "@/pages/MainPage";
 import { StatsPage } from "@/pages/StatsPage";
+import { SamComparePage } from "@/pages/SamComparePage";
 import { useMetadata } from "./hooks/useMetadata";
 import type { TabType } from "@/types/Tab";
 import type { AuthorType } from "@/types/Author";
@@ -58,6 +59,7 @@ function App() {
         }
       />
       <Route path="/stats" element={<StatsPage />} />
+      <Route path="/sam_compare" element={<SamComparePage />} />
     </Routes>
   );
 }
