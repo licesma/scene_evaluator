@@ -3,6 +3,7 @@ import "@google/model-viewer";
 import { MainPage } from "@/pages/MainPage";
 import { StatsPage } from "@/pages/StatsPage";
 import { SamComparePage } from "@/pages/SamComparePage";
+import { ManualMetadataPage } from "@/pages/ManualMetadataPage";
 import { useMetadata } from "./hooks/useMetadata";
 import type { TabType } from "@/types/Tab";
 import type { AuthorType } from "@/types/Author";
@@ -27,39 +28,38 @@ function App() {
     return filterVideos(data, selectedAuthor, selectedWeek, selectedStatus);
   }, [data, selectedAuthor, selectedWeek, selectedStatus]);
 
-  if (!data) {
-    return null;
-  }
-
   return (
     <Routes>
       <Route
         path="/"
         element={
-          <div className="flex flex-col gap-4">
-            <div>
-              <ControlBar
-                selectedTab={selectedTab}
-                onTabChange={(tab: TabType) => setSelectedTab(tab)}
-                selectedAuthor={selectedAuthor}
-                onAuthorChange={(author: AuthorType) =>
-                  setSelectedAuthor(author)
-                }
-                selectedWeek={selectedWeek}
-                onWeekChange={(week: WeekType) => setSelectedWeek(week)}
-                selectedStatus={selectedStatus}
-                onStatusChange={(status: StatusType) =>
-                  setSelectedStatus(status)
-                }
-              />
-              <Separator orientation="horizontal" />
+          data ? (
+            <div className="flex flex-col gap-4">
+              <div>
+                <ControlBar
+                  selectedTab={selectedTab}
+                  onTabChange={(tab: TabType) => setSelectedTab(tab)}
+                  selectedAuthor={selectedAuthor}
+                  onAuthorChange={(author: AuthorType) =>
+                    setSelectedAuthor(author)
+                  }
+                  selectedWeek={selectedWeek}
+                  onWeekChange={(week: WeekType) => setSelectedWeek(week)}
+                  selectedStatus={selectedStatus}
+                  onStatusChange={(status: StatusType) =>
+                    setSelectedStatus(status)
+                  }
+                />
+                <Separator orientation="horizontal" />
+              </div>
+              <MainPage allMetadata={filteredVideos} />
             </div>
-            <MainPage allMetadata={filteredVideos} />
-          </div>
+          ) : null
         }
       />
       <Route path="/stats" element={<StatsPage />} />
       <Route path="/sam_compare" element={<SamComparePage />} />
+      <Route path="/manual_metadata" element={<ManualMetadataPage />} />
     </Routes>
   );
 }
