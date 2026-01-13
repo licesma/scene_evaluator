@@ -30,7 +30,7 @@ export const PoseSelector = ({
   };
   // Available statuses in the same order as the radio options
   const poseOptions = React.useMemo(
-    () => ["pending", "wrong", "almost", "approved"],
+    () => ["no_recon", "pending", "wrong", "almost", "approved"],
     []
   );
 

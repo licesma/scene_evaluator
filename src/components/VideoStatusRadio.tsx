@@ -14,6 +14,16 @@ export const VideoStatusRadio = ({
       <Form.Group>
         <Form.Check
           type="radio"
+          label="No Reconstruction"
+          name="no_recon"
+          id="no-recon"
+          value="no_recon"
+          checked={videoStatus === "no_recon"}
+          onChange={(e) => onStatusChange(e.target.value)}
+          className="mb-3"
+        />
+        <Form.Check
+          type="radio"
           label="Pending"
           name="status"
           id="status-pending"

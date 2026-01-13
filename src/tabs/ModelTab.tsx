@@ -18,6 +18,7 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
     () => (glbBlob ? URL.createObjectURL(glbBlob) : undefined),
     [glbBlob]
   );
+
   useEffect(() => {
     return () => {
       if (blobUrl) {
@@ -27,10 +28,13 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
   }, [blobUrl]);
   return (
     <div className="h-full">
-      <ModelViewer
-        src={blobUrl ?? (selectedVideo ? `scenes/${selectedVideo}.glb` : "")}
-        alt="Reconstruction scenario"
-      />
+      {blobUrl ? (
+        <ModelViewer src={blobUrl} alt="Reconstruction scenario" />
+      ) : (
+        <div className="w-full h-full bg-black text-white flex items-center justify-center text-center text-2xl">
+          No Reconstruction
+        </div>
+      )}
       <div style={{ marginTop: "20px" }}>
         <img
           src={

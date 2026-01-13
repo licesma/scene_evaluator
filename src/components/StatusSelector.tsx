@@ -21,7 +21,11 @@ export const StatusSelector = ({
 
   const handleSave = async () => {
     try {
-      update(name, { ...metadata, status: status });
+      if (status === "no_recon") {
+        update(name, { ...metadata, status: status, pose: status });
+      } else {
+        update(name, { ...metadata, status: status });
+      }
     } catch (error) {
       console.error("Error updating video metadata:", error);
     }
@@ -29,7 +33,7 @@ export const StatusSelector = ({
 
   // Available statuses in the same order as the radio options
   const statusOptions = React.useMemo(
-    () => ["pending", "object", "pose", "approved"],
+    () => ["no_recon", "pending", "object", "pose", "approved"],
     []
   );
 

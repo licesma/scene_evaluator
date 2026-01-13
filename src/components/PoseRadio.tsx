@@ -11,6 +11,16 @@ export const PoseRadio = ({ pose, onPoseChange }: PoseRadioProps) => {
       <Form.Group>
         <Form.Check
           type="radio"
+          label="No Reconstruction"
+          name="no_recon"
+          id="no-recon"
+          value="no_recon"
+          checked={pose === "no_recon"}
+          onChange={(e) => onPoseChange(e.target.value)}
+          className="mb-3"
+        />
+        <Form.Check
+          type="radio"
           label="Pending"
           name="pose"
           id="pose-pending"
