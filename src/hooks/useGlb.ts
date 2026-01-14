@@ -26,6 +26,7 @@ export function useGlb(video?: string) {
     queryFn: () => getGlbBlob(video!, metadata!),
     enabled: !!video && !!metadata,
     staleTime: Infinity,
+    retry: false,
   });
 }
 

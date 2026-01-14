@@ -11,7 +11,7 @@ interface ModelTabProps {
 }
 
 const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
-  const { data: glbBlob } = useGlb(selectedVideo);
+  const { data: glbBlob, isLoading } = useGlb(selectedVideo);
   const { getMetadata } = useMetadata();
   const metadata = getMetadata(selectedVideo);
   const blobUrl = useMemo(
@@ -28,8 +28,8 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
   }, [blobUrl]);
   return (
     <div className="h-full">
-      {blobUrl ? (
-        <ModelViewer src={blobUrl} alt="Reconstruction scenario" />
+      {blobUrl || isLoading ? (
+        <ModelViewer src={blobUrl ?? ""} alt="Reconstruction scenario" />
       ) : (
         <div className="w-full h-full bg-black text-white flex items-center justify-center text-center text-2xl">
           No Reconstruction
