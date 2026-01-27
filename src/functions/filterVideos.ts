@@ -36,6 +36,7 @@ export function filterVideos(
                 )
             ) as Record<string, VideoMetadata>)
             : filteredByWeek;
-
+    
+            console.log("Layla", filteredByStatus)
     return filteredByStatus;
 }

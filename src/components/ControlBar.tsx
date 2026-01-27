@@ -1,102 +1,72 @@
-import type { TabType } from "@/types/Tab";
 import type { FC } from "react";
-import type { AuthorType } from "@/types/Author";
-import { authors } from "@/types/Author";
-import type { WeekType } from "@/types/Week";
-import { weeks } from "@/types/Week";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "./ui/label";
-import { status, type StatusType } from "@/types/Status";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { useObjectModel } from "@/providers/ObjectModelProvider";
+import { Filter } from "lucide-react";
+import { DARK_BLUE } from "@/constants";
 
-interface ControlBarProps {
-  selectedTab: TabType;
-  onTabChange: (tab: TabType) => void;
-  selectedAuthor: AuthorType;
-  onAuthorChange: (author: AuthorType) => void;
-  selectedWeek: WeekType;
-  onWeekChange: (week: WeekType) => void;
-  selectedStatus: StatusType;
-  onStatusChange: (status: StatusType) => void;
+interface NavItemProps {
+  to: string;
+  label: string;
+  isActive: boolean;
 }
 
-export const ControlBar: FC<ControlBarProps> = ({
-  selectedAuthor,
-  onAuthorChange,
-  selectedWeek,
-  onWeekChange,
-  selectedStatus,
-  onStatusChange,
-}) => {
+const NavItem: FC<NavItemProps> = ({ to, label, isActive }) => (
+  <Link
+    to={to}
+    className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+      isActive
+        ? ""
+        : "text-gray-500 hover:text-gray-700"
+    }`}
+    style={isActive ? { color: DARK_BLUE } : undefined}
+  >
+    {label}
+    {isActive && (
+      <span className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: DARK_BLUE }} />
+    )}
+  </Link>
+);
+
+interface ControlBarProps {
+  showFilters?: boolean;
+  onToggleFilters?: () => void;
+}
+
+export const ControlBar: FC<ControlBarProps> = ({ showFilters, onToggleFilters }) => {
+  const { model, setModel } = useObjectModel();
+  const isSam = model === "sam";
+  const location = useLocation();
+
+  const isStats = location.pathname === "/stats";
+  // Evaluator is active for "/" and any video route (not stats, sam_compare, or manual_metadata)
+  const isEvaluator = !["/stats", "/sam_compare", "/manual_metadata"].includes(location.pathname);
+
   return (
-    <div className="flex flex-row items-center mb-2 relative">
-      <Button asChild className="ml-4">
-        <Link to="/stats">Stats</Link>
-      </Button>
+    <div className="flex flex-row items-center relative justify-between">
+      <div className="flex items-center gap-2 ml-4">
+        {onToggleFilters && (
+          <Button
+            variant={showFilters ? "default" : "outline"}
+            size="sm"
+            onClick={onToggleFilters}
+            aria-label="Toggle filters"
+          >
+            <Filter className="h-4 w-4" />
+          </Button>
+        )}
+        <nav className="flex items-center">
+          <NavItem to="/" label="Evaluator" isActive={isEvaluator} />
+          <NavItem to="/stats" label="Stats" isActive={isStats} />
+        </nav>
+      </div>
 
-      <div className="flex flex-row gap-6 justify-center m-auto">
-        <div className="flex flex-col gap-1">
-          <Label className="ml-2">Author</Label>
-          <Select
-            defaultValue={selectedAuthor ?? authors[0]}
-            onValueChange={(value) => onAuthorChange(value as AuthorType)}
-          >
-            <SelectTrigger className="w-48" aria-label="Select author">
-              <SelectValue placeholder="Select author" />
-            </SelectTrigger>
-            <SelectContent>
-              {authors.map((author) => (
-                <SelectItem key={author} value={author}>
-                  {author.charAt(0).toUpperCase() + author.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label className="ml-2">Week</Label>
-          <Select
-            defaultValue={selectedWeek ?? weeks["all"]}
-            onValueChange={(value) => onWeekChange(value as WeekType)}
-          >
-            <SelectTrigger className="w-48" aria-label="Select week">
-              <SelectValue placeholder="Select week" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(weeks).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <Label className="ml-2">Status</Label>
-          <Select
-            defaultValue={selectedStatus ?? status["all"]}
-            onValueChange={(value) => onStatusChange(value as StatusType)}
-          >
-            <SelectTrigger className="w-48" aria-label="Select status">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(status).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex items-center gap-2 mr-4">
+        <Label className={`text-sm ${isSam ? "text-gray-400" : "font-semibold"}`}>Hunyuan</Label>
+        <Switch checked={isSam} onCheckedChange={(checked) => setModel(checked ? "sam" : "hunyuan")} />
+        <Label className={`text-sm ${!isSam ? "text-gray-400" : "font-semibold"}`}>Sam</Label>
       </div>
     </div>
   );

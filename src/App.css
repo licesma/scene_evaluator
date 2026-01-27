@@ -1,9 +1,12 @@
 #root {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100vh;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0rem 1rem 1rem 1rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .main-container {
@@ -17,6 +20,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100%;
 }
 
 .right-side {

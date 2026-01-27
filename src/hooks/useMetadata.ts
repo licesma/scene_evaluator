@@ -3,14 +3,21 @@ import { doc, getDoc, updateDoc, deleteField } from "firebase/firestore";
 import { useFirestore } from "@/providers/FirestoreProvider";
 import type { VideoMetadata } from "@/types/VideoMetadata";
 import { toast } from "sonner";
+import { FIREBASE_COLLECTION, HUNYUAN_DOCUMENT, SAM_DOCUMENT } from "@/constants";
+import { useObjectModel } from "@/providers/ObjectModelProvider";
+
+export const KEY = "reconstructions";
 
 export function useMetadata() {
   const db = useFirestore();
   const queryClient = useQueryClient();
-  const docRef = doc(db, "reconstructions", "metadata");
+  const { model } = useObjectModel();
+  const documentId = model === "sam" ? SAM_DOCUMENT : HUNYUAN_DOCUMENT;
+  const docRef = doc(db, FIREBASE_COLLECTION, documentId);
+  const queryKey = [KEY, model];
 
   const query = useQuery<Record<string, VideoMetadata>>({
-    queryKey: ["reconstructions"],
+    queryKey,
     queryFn: async () => {
       const fireDoc = await getDoc(docRef);
       if (!fireDoc.exists()) throw new Error("no doc");
@@ -24,13 +31,13 @@ export function useMetadata() {
       await updateDoc(docRef, { [key]: value });
     },
     onMutate: async ({ key, value }) => {
-      await queryClient.cancelQueries({ queryKey: ["reconstructions"] });
-      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>([
-        "reconstructions",
-      ]);
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>(
+        queryKey
+      );
       if (previous) {
         queryClient.setQueryData<Record<string, VideoMetadata>>(
-          ["reconstructions"],
+          queryKey,
           { ...previous, [key]: value }
         );
       }
@@ -38,11 +45,11 @@ export function useMetadata() {
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["reconstructions"], context.previous);
+        queryClient.setQueryData(queryKey, context.previous);
       }
     },
     onSuccess: (_data, { key, value }) => {
-      void queryClient.invalidateQueries({ queryKey: ["reconstructions"] });
+      void queryClient.invalidateQueries({ queryKey });
       toast(`${key}'s status updated to ${value.status}`);
     },
   });
@@ -52,13 +59,13 @@ export function useMetadata() {
       await updateDoc(docRef, updates);
     },
     onMutate: async (updates) => {
-      await queryClient.cancelQueries({ queryKey: ["reconstructions"] });
-      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>([
-        "reconstructions",
-      ]);
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>(
+        queryKey
+      );
       if (previous) {
         queryClient.setQueryData<Record<string, VideoMetadata>>(
-          ["reconstructions"],
+          queryKey,
           { ...previous, ...updates }
         );
       }
@@ -66,11 +73,11 @@ export function useMetadata() {
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["reconstructions"], context.previous);
+        queryClient.setQueryData(queryKey, context.previous);
       }
     },
     onSuccess: (_data, updates) => {
-      void queryClient.invalidateQueries({ queryKey: ["reconstructions"] });
+      void queryClient.invalidateQueries({ queryKey });
       const count = Object.keys(updates).length;
       toast(`${count} video${count === 1 ? "" : "s"} updated`);
     },
@@ -81,14 +88,14 @@ export function useMetadata() {
       await updateDoc(docRef, { [key]: deleteField() });
     },
     onMutate: async (key) => {
-      await queryClient.cancelQueries({ queryKey: ["reconstructions"] });
-      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>([
-        "reconstructions",
-      ]);
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Record<string, VideoMetadata>>(
+        queryKey
+      );
       if (previous) {
         const { [key]: _, ...rest } = previous;
         queryClient.setQueryData<Record<string, VideoMetadata>>(
-          ["reconstructions"],
+          queryKey,
           rest
         );
       }
@@ -96,11 +103,11 @@ export function useMetadata() {
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["reconstructions"], context.previous);
+        queryClient.setQueryData(queryKey, context.previous);
       }
     },
     onSuccess: (_data, key) => {
-      void queryClient.invalidateQueries({ queryKey: ["reconstructions"] });
+      void queryClient.invalidateQueries({ queryKey });
       toast(`${key} deleted`);
     },
   });

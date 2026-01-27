@@ -2,14 +2,18 @@ import { useMetadata } from "@/hooks/useMetadata";
 import type { VideoMetadata } from "@/types/VideoMetadata";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { useObjectModel, type ObjectModelType } from "@/providers/ObjectModelProvider";
 import React from "react";
 
 export async function getGlbBlob(
   video: string,
-  metadata: VideoMetadata
+  metadata: VideoMetadata,
+  objectModel: ObjectModelType
 ): Promise<Blob> {
+  const bucket = objectModel === "hunyuan" ? "openreal2sim" : "openreal2sim-sam"
+  console.log("cons", bucket)
   const response = await fetch(
-    `https://openreal2sim.s3.us-west-2.amazonaws.com/${metadata.week}/${metadata.author}/${video}/reconstruction/scene.glb`
+    `https://${bucket}.s3.us-west-2.amazonaws.com/${metadata.week}/${metadata.author}/${video}/reconstruction/scene.glb`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch glb");
@@ -19,11 +23,12 @@ export async function getGlbBlob(
 
 export function useGlb(video?: string) {
   const { getMetadata } = useMetadata();
+  const {model: objectModel} = useObjectModel();
   const metadata = getMetadata(video);
 
   return useQuery({
-    queryKey: ["glb", video],
-    queryFn: () => getGlbBlob(video!, metadata!),
+    queryKey: ["glb", objectModel, video],
+    queryFn: () => getGlbBlob(video!, metadata!, objectModel),
     enabled: !!video && !!metadata,
     staleTime: Infinity,
     retry: false,
@@ -35,6 +40,7 @@ export function usePrefetchGlb(
   selectedVideo?: string
 ) {
   const queryClient = useQueryClient();
+  const {model: objectModel} = useObjectModel();
   const { getMetadata } = useMetadata();
   const glbQuery = useGlb(selectedVideo);
 
@@ -49,7 +55,7 @@ export function usePrefetchGlb(
         if (metadata) {
           queryClient.prefetchQuery({
             queryKey: ["glb", v],
-            queryFn: () => getGlbBlob(v, metadata),
+            queryFn: () => getGlbBlob(v, metadata, objectModel),
             staleTime: Infinity,
           });
         }

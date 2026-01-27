@@ -1,7 +1,13 @@
 import type { VideoMetadata } from "../types/VideoMetadata";
 import * as React from "react";
-import { VideoStatusRadio } from "./VideoStatusRadio";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMetadata } from "@/hooks/useMetadata";
 
 interface StatusSelectorProps {
@@ -93,26 +99,32 @@ export const StatusSelector = ({
 
   return name && metadata && status ? (
     <>
-      <div style={{ marginBottom: "10px" }}>
-        <div className="text-left">
-          <b>Video:</b>
-        </div>
-        <div className="text-left">{name}</div>
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <div className="text-left">
-          <b>Prompt:</b>
-        </div>
-        <div className="text-left">{metadata.prompt}</div>
-      </div>
+    <div>
+      <img
+        src={ metadata
+            ? `https://openreal2sim.s3.us-west-2.amazonaws.com/${metadata.week}/${metadata.author}/${name}/source/000000.jpg`
+            : "https://picsum.photos/400/300"
+        }
+        alt="Frame from selected video"
+        style={{ maxWidth: "100%", height: "100%", }}
+      />
+    </div>
       <div>
         <div className="text-left">
           <b>Status:</b>
         </div>
-        <VideoStatusRadio
-          videoStatus={status}
-          onStatusChange={onStatusChange}
-        />
+        <Select value={status} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="no_recon">No Reconstruction</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="object">Wrong objects</SelectItem>
+            <SelectItem value="pose">Wrong pose</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex">
         <Button onClick={handleSave}>Save</Button>
