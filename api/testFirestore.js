@@ -1,4 +1,4 @@
-import { firestore } from "../lib/firebaseAdmin";
+import { firestore } from "../lib/firebaseAdmin.js";
 
 export default async function handler(req, res) {
   try {
