@@ -8,7 +8,8 @@ export function filterVideos(
     allMetadata: Record<string, VideoMetadata>,
     selectedAuthor: AuthorType,
     selectedWeek: WeekType,
-    selectedStatus: string
+    selectedStatus: string,
+    selectedPose: string
 ) {
     const filteredByAuthor =
         selectedAuthor !== "all"
@@ -36,7 +37,15 @@ export function filterVideos(
                 )
             ) as Record<string, VideoMetadata>)
             : filteredByWeek;
-    
-            console.log("Layla", filteredByStatus)
-    return filteredByStatus;
+
+    const filteredByPose =
+        selectedPose !== "all"
+            ? (Object.fromEntries(
+                Object.entries(filteredByStatus).filter(
+                    ([_name, meta]) => meta.pose == selectedPose
+                )
+            ) as Record<string, VideoMetadata>)
+            : filteredByStatus;
+
+    return filteredByPose;
 }

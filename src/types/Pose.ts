@@ -1,4 +1,5 @@
 export const pose = {
+  all: "All",
   pending: "Pending",
   wrong: "Wrong",
   almost: "Almost",

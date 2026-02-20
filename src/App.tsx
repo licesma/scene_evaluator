@@ -7,6 +7,7 @@ import { ManualMetadataPage } from "@/pages/ManualMetadataPage";
 import { useMetadata } from "./hooks/useMetadata";
 import type { AuthorType } from "@/types/Author";
 import { type StatusType } from "@/types/Status";
+import { type PoseType } from "@/types/Pose";
 import { Separator } from "@/components/ui/separator";
 import { ControlBar } from "@/components/ControlBar";
 import type { WeekType } from "@/types/Week";
@@ -18,14 +19,15 @@ function App() {
   const [selectedAuthor, setSelectedAuthor] = useState<AuthorType>("all");
   const [selectedWeek, setSelectedWeek] = useState<WeekType>("all");
   const [selectedStatus, setSelectedStatus] = useState<StatusType>("all");
+  const [selectedPose, setSelectedPose] = useState<PoseType>("all");
   const [showFilters, setShowFilters] = useState(false);
 
   const { data } = useMetadata();
 
   const filteredVideos = useMemo(() => {
     if (!data) return {};
-    return filterVideos(data, selectedAuthor, selectedWeek, selectedStatus);
-  }, [data, selectedAuthor, selectedWeek, selectedStatus]);
+    return filterVideos(data, selectedAuthor, selectedWeek, selectedStatus, selectedPose);
+  }, [data, selectedAuthor, selectedWeek, selectedStatus, selectedPose]);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -47,6 +49,8 @@ function App() {
                   onWeekChange={(week: WeekType) => setSelectedWeek(week)}
                   selectedStatus={selectedStatus}
                   onStatusChange={(status: StatusType) => setSelectedStatus(status)}
+                  selectedPose={selectedPose}
+                  onPoseChange={(p: PoseType) => setSelectedPose(p)}
                   showFilters={showFilters}
                 />
               </div>

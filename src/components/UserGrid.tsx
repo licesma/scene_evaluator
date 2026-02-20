@@ -55,8 +55,8 @@ const UsersGrid = (props: UserGridProps) => {
     }
   };
 
-  // Sync grid selection when selectedVideo changes externally (e.g., via keyboard)
-  useEffect(() => {
+  // Sync grid selection and scroll into view when selectedVideo changes
+  const syncSelection = () => {
     const api = gridRef.current?.api;
     if (!api || !selectedVideo) return;
 
@@ -68,12 +68,24 @@ const UsersGrid = (props: UserGridProps) => {
       }
     });
 
-    if (nodeToSelect && !nodeToSelect.isSelected()) {
-      nodeToSelect.setSelected(true, true);
-      // Ensure the selected row is visible
+    if (nodeToSelect) {
+      if (!nodeToSelect.isSelected()) {
+        nodeToSelect.setSelected(true, true);
+      }
+      // Always ensure the selected row is visible
       api.ensureNodeVisible(nodeToSelect, "middle");
     }
+  };
+
+  // Sync when selectedVideo changes
+  useEffect(() => {
+    syncSelection();
   }, [selectedVideo]);
+
+  // Also sync when grid becomes ready (for initial URL load)
+  const handleGridReady = () => {
+    syncSelection();
+  };
 
   return (
     <div className="flex flex-col h-full min-h-0 w-full [&_.ag-row-selected_.ag-cell]:text-white gap-1">
@@ -85,6 +97,7 @@ const UsersGrid = (props: UserGridProps) => {
           theme={customTheme}
           rowSelection="single"
           onSelectionChanged={handleRowSelection}
+          onGridReady={handleGridReady}
           suppressCellFocus={true}
           suppressRowHoverHighlight={false}
         />

@@ -12,6 +12,7 @@ import { authors } from "@/types/Author";
 import type { WeekType } from "@/types/Week";
 import { weeks } from "@/types/Week";
 import { status, type StatusType } from "@/types/Status";
+import { pose, type PoseType } from "@/types/Pose";
 import {
   Select,
   SelectContent,
@@ -29,6 +30,8 @@ export interface MainPageProps {
   onWeekChange: (week: WeekType) => void;
   selectedStatus: StatusType;
   onStatusChange: (status: StatusType) => void;
+  selectedPose: PoseType;
+  onPoseChange: (pose: PoseType) => void;
   showFilters: boolean;
 }
 
@@ -40,6 +43,8 @@ export const MainPage: React.FC<MainPageProps> = ({
   onWeekChange,
   selectedStatus,
   onStatusChange,
+  selectedPose,
+  onPoseChange,
   showFilters,
 }) => {
   const { getMetadata } = useMetadata();
@@ -113,6 +118,24 @@ export const MainPage: React.FC<MainPageProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(status).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label className="ml-2">Pose</Label>
+                <Select
+                  defaultValue={selectedPose ?? pose["all"]}
+                  onValueChange={(value) => onPoseChange(value as PoseType)}
+                >
+                  <SelectTrigger className="w-32" aria-label="Select pose">
+                    <SelectValue placeholder="Select pose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(pose).map(([key, label]) => (
                       <SelectItem key={key} value={key}>
                         {label}
                       </SelectItem>
