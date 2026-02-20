@@ -9,8 +9,12 @@ interface ModelContextValue {
 
 const ModelContext = createContext<ModelContextValue | null>(null);
 
-export function ObjectModelProvider({ children }: { children: React.ReactNode }) {
-  const [model, setModel] = useState<ObjectModelType>("hunyuan");
+export function ObjectModelProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [model, setModel] = useState<ObjectModelType>("sam");
 
   return (
     <ModelContext.Provider value={{ model, setModel }}>
