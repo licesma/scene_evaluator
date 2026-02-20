@@ -34,7 +34,7 @@ const statusLabels: Record<string, string> = {
 
 const poseOptions = ["no_recon", "pending", "wrong", "almost", "approved"];
 const poseLabels: Record<string, string> = {
-  no_recon: "1. No Reconstruction",
+  no_recon: "1. No FD Pose",
   pending: "2. Pending",
   wrong: "3. Wrong",
   almost: "4. Almost",
@@ -61,18 +61,14 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
 
   const handleSave = async () => {
     if (!selectedVideo || !metadata) return;
-    if(status !== metadata.status && pose != metadata.pose){
-    try {
-      if (status === "no_recon") {
-        update(selectedVideo, { ...metadata, status, pose: status });
-      } else {
+    if (status !== metadata.status || pose != metadata.pose) {
+      try {
         update(selectedVideo, { ...metadata, status, pose });
+      } catch (error) {
+        console.error("Error updating video metadata:", error);
       }
-    } catch (error) {
-      console.error("Error updating video metadata:", error);
     }
   };
-}
 
   // Keyboard bindings based on current tab
   useEffect(() => {
@@ -82,9 +78,15 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
         target &&
         (target.tagName === "TEXTAREA" ||
           (target.tagName === "INPUT" &&
-            ["text", "search", "password", "email", "number", "url", "tel"].includes(
-              (target as HTMLInputElement).type
-            )) ||
+            [
+              "text",
+              "search",
+              "password",
+              "email",
+              "number",
+              "url",
+              "tel",
+            ].includes((target as HTMLInputElement).type)) ||
           target.isContentEditable)
       ) {
         return;
@@ -129,9 +131,17 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
         <div className="h-10 flex items-center justify-between px-4 shrink-0">
           <div className="text-xl font-semibold">{selectedVideo}</div>
           <div className="flex items-center gap-2">
-            <Label className={`text-sm ${isPoses ? "text-gray-400" : "font-semibold"}`}>Model</Label>
+            <Label
+              className={`text-sm ${isPoses ? "text-gray-400" : "font-semibold"}`}
+            >
+              Model
+            </Label>
             <Switch checked={isPoses} onCheckedChange={handleTabChange} />
-            <Label className={`text-sm ${!isPoses ? "text-gray-400" : "font-semibold"}`}>Poses</Label>
+            <Label
+              className={`text-sm ${!isPoses ? "text-gray-400" : "font-semibold"}`}
+            >
+              Poses
+            </Label>
           </div>
         </div>
 
@@ -149,7 +159,11 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
           <div className="h-14 flex items-center justify-between px-4 border-t border-gray-300 shrink-0 gap-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Label className={`text-sm ${!isPoses ? "font-semibold" : "text-gray-400"}`}>Status:</Label>
+                <Label
+                  className={`text-sm ${!isPoses ? "font-semibold" : "text-gray-400"}`}
+                >
+                  Status:
+                </Label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Select status" />
@@ -164,7 +178,11 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <Label className={`text-sm ${isPoses ? "font-semibold" : "text-gray-400"}`}>Pose:</Label>
+                <Label
+                  className={`text-sm ${isPoses ? "font-semibold" : "text-gray-400"}`}
+                >
+                  Pose:
+                </Label>
                 <Select value={pose} onValueChange={setPose}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Select pose" />
