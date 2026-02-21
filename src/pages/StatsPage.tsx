@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import Stats from "@/components/ui/Stats";
+import Stats from "@/components/Stats";
 import { useMetadata } from "@/hooks/useMetadata";
 
 export const StatsPage: FC = () => {
@@ -15,4 +15,3 @@ export const StatsPage: FC = () => {
     </div>
   );
 };
-
