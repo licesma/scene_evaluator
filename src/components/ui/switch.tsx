@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as SwitchPrimitive from "@radix-ui/react-switch"
-
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as SwitchPrimitive from "@radix-ui/react-switch";
+import { cn } from "@/utils/mergeTailwindStyles";
 
 function Switch({
   className,
   alwaysOn,
   ...props
 }: React.ComponentProps<typeof SwitchPrimitive.Root> & {
-  alwaysOn?: boolean
+  alwaysOn?: boolean;
 }) {
   return (
     <SwitchPrimitive.Root
@@ -20,18 +19,18 @@ function Switch({
         alwaysOn
           ? "bg-primary"
           : "data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
-        className
+        className,
       )}
       {...props}
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          "bg-background pointer-events-none block size-4 rounded-full ring-0 shadow-lg transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+          "bg-background pointer-events-none block size-4 rounded-full ring-0 shadow-lg transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0",
         )}
       />
     </SwitchPrimitive.Root>
-  )
+  );
 }
 
-export { Switch }
+export { Switch };

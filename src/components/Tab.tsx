@@ -1,5 +1,5 @@
 import { useState, useEffect, type FC } from "react";
-import type { TabType } from "@/types/Tab";
+import type { CanvasType } from "@/types/CanvasType";
 import type { VideoMetadata } from "@/types/VideoMetadata";
 import "../App.css";
 import "@google/model-viewer";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMetadata } from "@/hooks/useMetadata";
+import { useKeyboardControl } from "@/hooks/useKeyboardControl";
 
 interface TabProps {
   selectedVideo: string | undefined;
@@ -42,7 +43,7 @@ const poseLabels: Record<string, string> = {
 };
 
 export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
-  const [currentTab, setCurrentTab] = useState<TabType>("model");
+  const [currentTab, setCurrentTab] = useState<CanvasType>("model");
   const [status, setStatus] = useState(metadata?.status ?? "pending");
   const [pose, setPose] = useState(metadata?.pose ?? "pending");
   const { update } = useMetadata();
@@ -59,6 +60,14 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
     setCurrentTab(newTab);
   };
 
+  const updateDropdownState = (index: number) => {
+    if (currentTab === "model") {
+      setStatus(statusOptions[index - 1]);
+    } else {
+      setPose(poseOptions[index - 1]);
+    }
+  };
+
   const handleSave = async () => {
     if (!selectedVideo || !metadata) return;
     if (status !== metadata.status || pose != metadata.pose) {
@@ -69,60 +78,7 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
       }
     }
   };
-
-  // Keyboard bindings based on current tab
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (
-        target &&
-        (target.tagName === "TEXTAREA" ||
-          (target.tagName === "INPUT" &&
-            [
-              "text",
-              "search",
-              "password",
-              "email",
-              "number",
-              "url",
-              "tel",
-            ].includes((target as HTMLInputElement).type)) ||
-          target.isContentEditable)
-      ) {
-        return;
-      }
-      if (e.repeat) return;
-
-      // Enter triggers save and next
-      if (e.key === "Enter") {
-        handleSave();
-        onNextVideo();
-        e.preventDefault();
-        return;
-      }
-
-      // 'n' moves to next video
-      if (e.key.toLowerCase() === "n") {
-        onNextVideo();
-        e.preventDefault();
-        return;
-      }
-
-      // Number keys: control status (model tab) or pose (poses tab)
-      const idx = parseInt(e.key, 10);
-      if (!Number.isNaN(idx) && idx >= 1 && idx <= 5) {
-        if (currentTab === "model") {
-          setStatus(statusOptions[idx - 1]);
-        } else {
-          setPose(poseOptions[idx - 1]);
-        }
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentTab, handleSave, onNextVideo]);
+  useKeyboardControl({ handleSave, updateDropdownState, onNextVideo });
 
   return (
     <div className="flex flex-col gap-6 max-w-none w-full h-full">
