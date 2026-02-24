@@ -13,7 +13,7 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
   const { data: glbBlob, isLoading } = useGlb(selectedVideo);
   const blobUrl = useMemo(
     () => (glbBlob ? URL.createObjectURL(glbBlob) : undefined),
-    [glbBlob]
+    [glbBlob],
   );
 
   useEffect(() => {
@@ -25,8 +25,15 @@ const ModelTab: FC<ModelTabProps> = ({ selectedVideo }) => {
   }, [blobUrl]);
   return (
     <div className="h-full">
-      {blobUrl || isLoading ? (
-        <ModelViewer src={blobUrl ?? ""} alt="Reconstruction scenario" />
+      {isLoading ? (
+        <div
+          className="w-full h-full flex items-center justify-center"
+          style={{ backgroundColor: "#dae7f7ff" }}
+        >
+          <div className="w-48 h-48 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : blobUrl ? (
+        <ModelViewer src={blobUrl} alt="Reconstruction scenario" />
       ) : (
         <div className="w-full h-full bg-black text-white flex items-center justify-center text-center text-2xl">
           No Reconstruction
