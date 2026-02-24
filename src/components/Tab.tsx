@@ -42,10 +42,12 @@ const poseLabels: Record<string, string> = {
   approved: "5. Correct",
 };
 
+
 export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
   const [currentTab, setCurrentTab] = useState<CanvasType>("model");
   const [status, setStatus] = useState(metadata?.status ?? "pending");
   const [pose, setPose] = useState(metadata?.pose ?? "pending");
+  const [gripped, setGripped] = useState(metadata?.gripped ?? false);
   const { update } = useMetadata();
   const isPoses = currentTab === "poses";
 
@@ -53,6 +55,7 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
   useEffect(() => {
     setStatus(metadata?.status ?? "pending");
     setPose(metadata?.pose ?? "pending");
+    setGripped(metadata?.gripped ?? false);
   }, [metadata]);
 
   const handleTabChange = (checked: boolean) => {
@@ -70,15 +73,15 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
 
   const handleSave = async () => {
     if (!selectedVideo || !metadata) return;
-    if (status !== metadata.status || pose != metadata.pose) {
+    if (status !== metadata.status || pose !== metadata.pose || gripped !== metadata.gripped) {
       try {
-        update(selectedVideo, { ...metadata, status, pose });
+        update(selectedVideo, { ...metadata, status, pose, gripped });
       } catch (error) {
         console.error("Error updating video metadata:", error);
       }
     }
   };
-  useKeyboardControl({ handleSave, updateDropdownState, onNextVideo });
+  useKeyboardControl({ handleSave, updateDropdownState, onNextVideo, toggleGripped: () => setGripped((v) => !v) });
 
   return (
     <div className="flex flex-col gap-6 max-w-none w-full h-full">
@@ -151,6 +154,10 @@ export const Tab: FC<TabProps> = ({ selectedVideo, metadata, onNextVideo }) => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm">Gripped:</Label>
+                <Switch checked={gripped} onCheckedChange={setGripped} />
               </div>
             </div>
             <Button onClick={handleSave}>Save</Button>

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import {
   ModuleRegistry,
@@ -42,9 +42,12 @@ const UsersGrid = (props: UserGridProps) => {
         .sort((a, b) => a.name.localeCompare(b.name)),
     [videos]
   );
-  const [colDefs] = useState<ColDef<UserInterface>[]>([
-    { field: "name", headerName: `${rowData.length} Reconstructions`, flex: 3, cellStyle: { textAlign: "left" }, headerClass: "text-[20px] font-bold" },
-  ]);
+  const colDefs = useMemo<ColDef<UserInterface>[]>(
+    () => [
+      { field: "name", headerName: `${rowData.length} Reconstructions`, flex: 3, cellStyle: { textAlign: "left" }, headerClass: "text-[20px] font-bold" },
+    ],
+    [rowData.length]
+  );
 
 
   const handleRowSelection = () => {
