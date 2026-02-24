@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useMetadata } from "@/hooks/useMetadata";
 import type { VideoMetadata } from "@/types/VideoMetadata";
 import { MetadataTable, type MetadataRow } from "@/components/MetadataTable";
@@ -41,6 +42,7 @@ export const ManualMetadataPage: FC = () => {
   const [status, setStatus] = useState<string>("");
   const [pose, setPose] = useState<string>("");
   const [prompt, setPrompt] = useState("");
+  const [gripped, setGripped] = useState(false);
 
   const handleRowSelect = (row: MetadataRow) => {
     setKey(row.name);
@@ -49,6 +51,7 @@ export const ManualMetadataPage: FC = () => {
     setStatus(row.status);
     setPose(row.pose);
     setPrompt(row.prompt);
+    setGripped(row.gripped ?? false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +64,7 @@ export const ManualMetadataPage: FC = () => {
       status,
       pose,
       prompt,
+      gripped
     };
 
     await update(key.trim(), metadata);
@@ -78,6 +82,7 @@ export const ManualMetadataPage: FC = () => {
     setStatus("");
     setPose("");
     setPrompt("");
+    setGripped(false);
   };
 
   return (
@@ -207,6 +212,18 @@ export const ManualMetadataPage: FC = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Gripped Toggle */}
+                <div className="flex items-center gap-3">
+                  <Switch
+                    id="gripped"
+                    checked={gripped}
+                    onCheckedChange={setGripped}
+                  />
+                  <Label htmlFor="gripped" className="text-gray-700 cursor-pointer">
+                    Gripped
+                  </Label>
                 </div>
               </div>
             </div>

@@ -18,6 +18,7 @@ export interface MetadataRow {
   status: string;
   pose: string;
   prompt: string;
+  gripped: boolean;
 }
 
 export interface MetadataTableProps {
@@ -36,6 +37,7 @@ export const MetadataTable = ({ data, onSelect }: MetadataTableProps) => {
       { field: "author", flex: 1, cellStyle: { textAlign: "left" } },
       { field: "status", flex: 1, cellStyle: { textAlign: "left" } },
       { field: "pose", flex: 1, cellStyle: { textAlign: "left" } },
+      { field: "gripped", flex: 1, cellStyle: { textAlign: "left" } },
     ],
     []
   );
@@ -50,6 +52,7 @@ export const MetadataTable = ({ data, onSelect }: MetadataTableProps) => {
         status: meta.status || "",
         pose: meta.pose || "",
         prompt: meta.prompt || "",
+        gripped: meta.gripped ?? false,
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [data]);
